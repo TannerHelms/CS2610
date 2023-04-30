@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <title>Weather App</title>
+</head>
+<body>  
+    <div id="app">
+        <!-- Navigation Menu -->
+        <nav class="navbar navbar-expand-md bg-dark navbar-dark sticky-top">
+            <div class="container">
+                <a href="#" class="navbar-brand">Vue.js Weather App</a>
+                <button 
+                    class="navbar-toggler" 
+                    type="button" 
+                    data-bs-toggle="collapse" 
+                    data-bs-target="#navmenu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navmenu">
+                    <ul class="navbar-nav ms-auto">
+                        <li class="nav-item">
+                            <a href="#location" class="nav-link">Your Location</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#conditions" class="nav-link">Conditions</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="#forecast" class="nav-link">Forecast</a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="./plan.html" class="nav-link">Plan</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Location Section -->
+        <section id="location" class="bg-dark-subtle text-light p-5 text-center">
+            <div class="container">
+                <h3 class="text-decoration-underline">Your Location</h1>
+                    <p v-if="error != undefined">{{error}} retreiving your location</p>
+                    <div v-else-if="location === undefined">
+                        <div class="spinner-border" role="status">
+                            <span class="sr-only"></span>
+                          </div>
+                        </div>
+                    <p v-else>{{location}}</p>
+            </div>
+        </section>
+
+        <!-- Current Condiditon Section -->
+        <section id="conditions" class="bg-info text-light p-5 text-center">
+            <h3 class="text-decoration-underline text-center">Current Condiditons</h3>
+            <p v-if="error != undefined">{{error}} getting the current conditions</p>
+            <div v-else-if="conditions === undefined">
+                <div class="spinner-border" role="status">
+                    <span class="sr-only"></span>
+                  </div>
+                </div>
+            <div v-else>
+                <p>Current weather conditions @ {{date}}</p>
+                <ul class="list-group list-group-flush w-50 justify-content-center m-auto">
+                    <li v-for="item in conditions" class="list-group-item">
+                        {{item}}
+                    </li>
+                </ul>
+            <div>
+        </section>
+
+        <!-- Forecast-->
+        <section id="forecast" class="bg-primary p-5 text-center text-light">
+            <h3 class="text-decoration-underline">5 day 3-hour forecast</h3>
+            <br>
+            <p v-if="error != undefined">{{error}} getting the 5 day forecast</p>
+            <div v-else-if="forecast === undefined">
+                <div class="spinner-border" role="status">
+                    <span class="sr-only"></span>
+                  </div>
+                </div>
+            <div v-else>
+                <p><span class="text-danger" style="font-weight:bold">{{unlikely}} unlikely </span>{{neutral}} neutral <span class="text-success" style="font-weight: bold;">{{likely}} likely</span></p>
+                <div v-for="(item, index) in forecast" @click="updateMe" class="m-2 text-light p-2" :style="{backgroundColor:item.color, cursor: 'pointer'}" :data-index="index">
+                    <p>{{item.title}}</p>
+                    <ul class="list-group list-group-flush w-50 justify-content-center m-auto">
+                        <li v-for="item in item.values" class="list-group-item">
+                            {{item}}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        const app = Vue.createApp({
+            data() {
+                return {
+                    location : undefined,
+                    conditions : undefined,
+                    date : undefined,
+                    longitude : undefined,
+                    latitude : undefined,
+                    forecast : undefined,
+                    error : undefined,
+                }
+            },
+
+            methods: {
+                updateMe(env) {
+                    let target = env.currentTarget;
+                    let index = target.getAttribute('data-index');
+                    if (this.forecast[index].color == "darkslategray") {
+                        this.forecast[index].color = "green";
+                    } else if (this.forecast[index].color == "green") {
+                        this.forecast[index].color = "red";
+                    } else {
+                        this.forecast[index].color = "darkslategray";
+                    }
+                }
+
+            },
+
+            computed: {
+                unlikely() {
+                    let counter = 0;
+                    for (var item of this.forecast) {
+                        if (item.color == "red") {
+                            counter++;
+                        }
+                    }
+                    return counter;
+                },
+
+                likely() {
+                    let counter = 0;
+                    for (var item of this.forecast) {
+                        if (item.color == "green") {
+                            counter++;
+                        }
+                    }
+                    return counter; 
+                },
+
+                neutral() {
+                    let counter = 0;
+                    for (var item of this.forecast) {
+                        if (item.color == "darkslategray") {
+                            counter++;
+                        }
+                    }
+                    return counter;
+                }
+
+            },
+
+            created() {
+                fetch('https://ipgeolocation.abstractapi.com/v1/?api_key=dabde4db22754a7b9570226b9ef6938d')
+                .then(response => response.json())
+                .then(json => {
+                    this.latitude = json.latitude;
+                    this.longitude = json.longitude;
+                    this.location = `You are located in ${json.city}, ${json.region}, ${json.country} at coordinates ${json.latitude} ${json.longitude}`;
+                    return fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${json.latitude}&lon=${json.longitude}&units=imperial&appid=6c252543070200a6700d30bf449c5c54`);
+                })
+                .then(response => response.json())
+                .then(json => {
+                    let today = new Date();
+                    let date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+                    let time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+                    this.date = date +' '+ time;
+                    this.conditions = [
+                        `Currently ${json.main.temp}`,
+                        `High ${json.main.temp_max}`,
+                        `Low ${json.main.temp_min}`,
+                        `${json.weather[0].description}`,
+                        `${json.main.humidity}% humidity`,
+                        `${json.main.pressure} HPA pressure`,
+                    ]
+                    return fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${this.latitude}&lon=${this.longitude}&units=imperial&appid=6c252543070200a6700d30bf449c5c54`)
+                })
+                .then(response => response.json())
+                .then(json => {
+                    this.forecast = []
+                    for (const i of json.list){
+                        this.forecast.push({
+                            title: `Conditions for ${i.dt_txt}`,
+                            color: "darkslategray",
+                            values : [
+                            `Temperature ${i.main.temp}`,
+                            `${i.weather[0].description}`,
+                            `${i.main.humidity}% humidity`,
+                            `${i.main.pressure} HPA pressure`,
+                            ]
+                        })
+                    }
+                    this.neutral = json.list.length;
+                })
+                .catch(error => {
+                    this.error = "There was a network error";
+                })
+            },
+        }).mount('#app');
+    </script>
+</body>
+</html>

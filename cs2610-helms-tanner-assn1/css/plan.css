@@ -1,0 +1,7 @@
+#devlopmentPlan h3:nth-of-type(odd) {
+    text-decoration: underline;
+}
+
+#devlopmentPlan h3:nth-of-type(even) {
+    text-decoration: underline dotted;
+}

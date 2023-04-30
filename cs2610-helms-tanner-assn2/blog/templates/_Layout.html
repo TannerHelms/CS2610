@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Blog</title>
+    <!-- Add additional CSS in static file -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}"/>
+    {% block css %}{% endblock %}
+</head>
+
+<body>
+<div class="container">
+    <div class="home">
+        <ul>
+            <li><a id="index" href="{% url 'blog:index' %}">Blog</a></li>
+            <li><a id="archive" href="{% url 'blog:archive' %}">Archive</a></li>
+            <li><a id="about" href="{% url 'blog:about' %}">About</a></li>
+            <li><a id="techtips+css" href="{% url 'blog:techtipscss' %}">Tech Tips - CSS edition</a></li>
+            <li><a id="techtips-css" href="{% url 'blog:techtips' %}">Tech Tips - 90's edition</a></li>
+            <li><a id="plan" href="{% url 'blog:plan' %}">Software Dev Plan</a></li>
+            <li><a id="polls" href="{% url 'polls:index' %}">Polls</a></li>
+        </ul>
+
+    </div>
+    <div style="margin: 40px;">
+        <p style="text-align:center">Current Time: {{ time }}</p>
+        {% block content %}<!-- default content text (typically empty) --> {% endblock %}
+    </div>
+</div>
+<script type="text/javascript">
+    let currentURL = window.location.href;
+    currentURL = currentURL.split("/");
+    if (currentURL.length == 4){
+        document.getElementById("index").classList.add("active");
+    } else {
+        let page = currentURL[currentURL.length - 2]
+        var ele = document.getElementById(page);
+        if (ele){
+            document.getElementById(page).classList.add("active");
+        }
+    }
+
+</script>
+{% block js %}{% endblock %}
+</body>
+</html>

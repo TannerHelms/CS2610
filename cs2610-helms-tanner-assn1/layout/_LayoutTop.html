@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Blog</title>
+    <link rel="stylesheet" href="./css/style.css" type="text/css">
+    <script type="text/javascript">
+        let currentURL = window.location.href;
+        currentURL = currentURL.split("/");
+        let page = currentURL[currentURL.length - 1].replace(".html", "");
+        document.head.innerHTML += '<link rel="stylesheet" href="./css/' + page + '.css" type="text/css"/>';
+    </script>
+</head>
+
+<body>
+<div class="container">
+    <ul>
+        <li><a id="index" href="index.html">Blog</a></li>
+        <li><a id="about" href="about.html">About</a></li>
+        <li><a id="techtips+css" href="techtips+css.html">Tech Tips - CSS edition</a></li>
+        <li><a id="techtips-css" href="techtips-css.html">Tech Tips - 90's edition</a></li>
+        <li><a id="plan" href="plan.html">Software Dev Plan</a></li>
+        <li><a id="debugging" href="debugging">Debugging</a></li>
+    </ul>
+
+    <div style="margin: 40px;">

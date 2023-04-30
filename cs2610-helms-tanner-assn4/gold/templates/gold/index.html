@@ -1,0 +1,117 @@
+{% extends "_Layout.html" %}
+{% block content %}
+<h2 class="text-center">What's your Weight's Worth in Gold?</h2>
+<p class="text-center">Input the weight and press the = button to see what your worth</p>
+<p class="text-center">For your privacy, Results are removed when clicked</p>
+<div class="input-group mb-3 justify-content-center">
+    <input id="weight" type="number" placeholder="7">
+    <select class="custom-select m-1" id="inputGroup">
+        <option selected value="lb,Pounds">Pounds</option>
+        <option value="oz,Dry Ounces">Dry Ounces</option>
+        <option value="t_oz,Troy Ounces">Troy Ounces</option>
+        <option value="kg,Kilograms">Kilograms</option>
+        <option value="g,Grams">Grams</option>
+        <option value="T,Tons">Tons</option>
+    </select>
+    <button type="button" onclick="submit()">=</button>
+</div>
+<p id="pricePerGold" class="text-center">Please Wait</p>
+<p id="result" class="text-center"></p>
+<div id="resultContainer"></div>
+
+<script>
+    setGoldPrice()
+
+    function setGoldPrice(){
+        let key = 'ev-29YdSAx2sM4ke5p7u';
+        const url = `https://data.nasdaq.com/api/v3/datasets/LBMA/GOLD?key=${key}&limit=1`;
+        fetch(url)
+        .then(resp => resp.json())
+        .then(function(data) {
+            goldData = data.dataset.data[0][1]
+            document.getElementById('pricePerGold').innerText = `The Price Of Gold As of ${data.dataset.data[0][0]} is ${goldData} Per Troy OZ`
+        })
+        .catch(function(error) {
+            document.getElementById('pricePerGold').innerText = `A Wild TypeError Appears! Wait a moment and refresh the page to try again!`
+            goldData = 0
+        });
+    }
+
+    function deleteDiv(id) {
+        document.getElementById(id).remove();
+    }
+
+    var counter = 1;
+    function submit(){
+        let result = document.getElementById('result').textContent;
+        let weight = document.getElementById('weight').value;
+        let option = document.getElementById('inputGroup').value.split(',')[0];
+        let optionName = document.getElementById('inputGroup').value.split(',')[1];
+        newDiv = document.createElement('div');
+        newDiv.id = counter;
+        counter++;
+        newDiv.classList.add('stuff-box');
+        newSpan = document.createElement('span');
+        newSpan.classList.add('text-center');
+        newDiv.appendChild(newSpan);
+
+        newDiv.addEventListener("click", function(index) {
+            return function(){
+                deleteDiv(index);
+            }
+        }(newDiv.id))
+
+        if (goldData == 0) {
+            newSpan.innerText = "Unable to calculate value as there was a network error";
+            newDiv.classList.add('red');
+            document.getElementById("resultContainer").prepend(newDiv)
+            return;
+        }
+
+        if (weight == "") {
+            alert("No value provided!");
+            return;
+        }
+
+        if (isNaN(weight)) {
+            newSpan.innerText = "The value provided was not a number!";
+            newDiv.classList.add('red');
+            document.getElementById("resultContainer").prepend(newDiv)
+            return;
+        }
+
+        if (weight < 0){
+            newSpan.innerText = "The value provided was not positive!";
+            newDiv.classList.add('red');
+            document.getElementById("resultContainer").prepend(newDiv)
+            return;
+        }
+
+        Before = new Date();
+        url = `/unitconv/convert?from=${option}&value=${weight}&to=t_oz`
+        fetch(url)
+            .then(resp => resp.json())
+            .then(json => {
+                if (json.hasOwnProperty('error')) {
+                    End = new Date() - Before;
+                    newSpan.innerText = json.error + " Time: " + End + " milliseconds";
+                    newDiv.classList.add('red');
+                } else {
+                    newSpan.innerText =  `At ${new Date().toJSON().slice(0,19).replace("T", " ")},  ${weight} ${optionName} Of Gold Is Worth \$${json.value * goldData}`;
+                    newDiv.classList.add('green');
+                }
+            })
+            .catch(function(error) {
+                End = new Date() - Before;
+                newSpan.innerText = 'A Wild TypeError Appears! Time: ' + End + " milliseconds";
+                newDiv.classList.add('red');
+            });
+        document.getElementById("resultContainer").prepend(newDiv);
+
+    }
+    function deleteDiv(id) {
+        document.getElementById(id).remove();
+    }
+
+</script>
+{% endblock %}

@@ -1,0 +1,47 @@
+{% extends "_Layout.html" %}
+
+{% block css %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'css/index.css' %}" />
+{% endblock %}
+
+
+{% block content %}
+{% if blogs %}
+{%for blog in blogs %}
+<h1 class="meta">{{ blog.title }}</h1>
+<p style="line-height:15px;">By {{ blog.author }} | {{ blog.posted }}</p>
+<div class="image-container">
+    <div class="text">
+        <p>
+            {{ blog.content | truncatewords:100}}
+        </p>
+    </div>
+
+    <div class="image" style="margin-left:20px; width:50%;">
+        {% if blog.imageUrl != "" %}
+        {% load static %}
+        <img src="{% get_static_prefix %}images/{{ blog.imageUrl }}" alt="{{ blog.imageUrl }}">
+        {% endif %}
+    </div>
+</div>
+<a style="all:unset" href="{% url 'blog:detail' blog.id %}"><button class="btn">View Blog</button></a>
+<hr>
+{% endfor %}
+{% else %}
+<p>no blogs are available</p>
+{% endif %}
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript">
+    function openModel(id) {
+        var modal = document.getElementById("model-" + id);
+        modal.style.display = "block";
+    }
+    function closeModel(id) {
+        var modal = document.getElementById("model-" + id);
+        modal.style.display = "none";
+    }
+</script>
+{% endblock %}

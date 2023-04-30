@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Tech Tips - css</title>
+    <style>
+        button {
+            border: none;
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 4px 2px;
+            cursor: pointer;
+            background-color: #008CBA;
+        }
+    </style>
+</head>
+
+<body style="background: url('images/japan.jpg') no-repeat center center fixed; background-size: cover; box-shadow: inset 0 0 0 1000px rgba(0,0,0,.2);">
+
+    <div class="container" style="background-color: rgb(255, 255, 255, 0.7); position: absolute; width: 70%; margin-left: 15%; margin-top: 20px;">
+        <ul style="list-style-type: none; margin: 0; padding: 0; overflow: hidden; border: 1px solid #e7e7e7; background-color: #f3f3f3;">
+            <li style="float: left;"><a style ="display: block; color: #666; text-align: center; padding: 14px 16px; text-decoration: none" href="index.html">Blog</a></li>
+            <li style="float: left;"><a style="display: block; color: #666; text-align: center; padding: 14px 16px; text-decoration: none;" href="about.html">About</a></li>
+            <li style="float: left;"><a style="display: block; color: #666; text-align: center; padding: 14px 16px; text-decoration: none;" class="active" href="techtips+css.html">Tech Tips - CSS edition</a></li>
+            <li style="float: left;"><a style="display: block; color: #666; text-align: center; padding: 14px 16px; text-decoration: none;" href="techtips-css.html">Tech Tips - 90's edition</a></li>
+            <li style="float: left;"><a style="display: block; color: #666; text-align: center; padding: 14px 16px; text-decoration: none;" href="plan.html">Software Dev Plan</a></li>
+
+        </ul>
+
+        <div style="margin: 40px;">
+            <h1>1. HTML Elements</h1>
+            <div style="margin-left:60px">
+                <p><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/p"><code>	&lt;P&gt;</code></a> - Represents a paragraph html tag. These are usually used when trying to make small text like this. This is a Block Level Statement</p>
+                <p><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/img"><code>&lt;img&gt;</code></a> - An img tag is used to display an image on the screen, you provide it the source and it does the rest! This is a Block Level Statement</p>
+                <p><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/b"><code>&lt;b&gt;</code></a> - Whenever you want something to stand out, the b tag brins an element to attention and bolds it. This doesnt have a display type as it helpes style an element</p>
+                <p><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/code"><code>&lt;code&gt;</code></a> - Whenever using a code element, it stylizes the text to make it look like computer code. This is a in-line element</p>
+                <p><a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/ol"><code>&lt;ol&gt;</code></a> - You can use this for a ordered list with number, like a grocery list! This is a Block Level Statement</p>
+                <ol style="margin-left:20px">
+                    <li>Eggs</li>
+                    <li>Milk</li>
+                    <li>Water</li>
+                </ol>
+            </div>
+
+            <h1>2. HTML Character Enitites</h1>
+            <div style="margin-left:60px">
+                <p><code>&lt;</code> - This character entity is used to show the left side of the code</p>
+                <p><code>&gt;</code> - This character entity is used to show the right side of the code</p>
+                <p><code>&quot;</code> - This character entity is used to show a quotation</p>
+            </div>
+
+            <h1>3. CSS Selectors</h1>
+            <div style="margin-left:60px">
+                <p>
+                    <code>type</code> - The type CSS selector is used when you want to select certain
+                    html elements and use css to style it
+                </p>
+
+                <p>
+                    <code>.class</code> - The class CSS selector is used when you want to create some styling for an element.
+                    After you create the styling for the elements you want, in order to use it put a class="(class name)" to
+                    attach the styling to the element
+                </p>
+
+                <p>
+                    <code>#id</code> - To use the #id CSS selector, create the stying with the #(id of element) in your stylingsheet.
+                    Then to connect the styling to the HTMl element, in the element tag put id="(name of css style)"
+                </p>
+                <p>
+                    <code>:nth-child</code> - This CSS selector is used when you want to only change the styling of nth element within
+                    a HTML Element. For example, if you have a table and want every other line to be a different color, you could use tr:nth-child(odd)
+                    to select all of the odd rows and change the background color.
+                </p>
+            </div>
+            <h1>4. CSS Properties</h1>
+            <div style="margin-left:40px">
+                <p id="blue">
+                    <code>background-color</code> - This sets the background for the gived element that this css is tagged too.
+                    For example, if you want your background color to be blue, you could use "background-color: blue" or
+                    "background-color: red". Click on <button onclick="Blue()">this</button> to toggle the background color of this.
+                </p>
+                <p id="center" style="text-align:justify">
+                    <code>text-align</code> - text align defines how text is aligned within the parent element. For example, if your
+                    making a title for your page and you want the text to be in the center, you could use "text-align: center. Another way
+                    to use text-align is if you want all your text to look like the same length on each line. You could use "text-align: justify"
+                    to make all your text the same length. Im acutally using text-align justify in the current next. Notice how each line is the same length.
+                    Click on <button onclick="Center()">this</button> to toggle this text-align to center.
+
+                </p>
+                <p id="hideMe">
+                    <code>Display</code> - Display is used when your trying to modify how that element is display on the screen. For example,
+                    you could use "display: none" if you want to hide an element. Later, you could use javascript and change the display of the element
+                    to "display: block" to show the element. click on <button onclick="Hide()">this</button> to change this elements display to none;
+                </p>
+            </div>
+        </div>
+    </div>
+    <script>
+        function Center() {
+            if (document.getElementById("center").style.textAlign == "justify") {
+                document.getElementById("center").style.textAlign = "center";
+            } else {
+                document.getElementById("center").style.textAlign = "justify";
+            }
+        }
+        function Blue() {
+            if (document.getElementById("blue").style.backgroundColor == "blue") {
+                document.getElementById("blue").style.backgroundColor = "red";
+            } else {
+                document.getElementById("blue").style.backgroundColor = "blue"
+            }
+
+        }
+        function Hide() {
+            document.getElementById("hideMe").style.display = "none";
+        }
+    </script>
+</body>
+</html>

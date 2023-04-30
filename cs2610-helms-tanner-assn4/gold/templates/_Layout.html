@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- Load the site css -->
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'style.css' %}"/>
+    {% block css %}{% endblock %}
+    <title>Worth your weight in gold</title>
+  </head>
+  <body>
+    <div class="container">
+    <div class="home">
+      <ul>
+            <li><a id="index" href="{% url 'gold:index' %}">Calculator</a></li>
+            <li><a id="plan" href="{% url 'gold:plan' %}">Software Dev Plan</a></li>
+        </ul>
+    </div>
+    <div id="container" style="margin: 40px;">
+      {% block content %}<!-- default content text (typically empty) --> {% endblock %}
+    </div>
+</div>
+
+{% block js %}{% endblock %}
+
+    <script type="text/javascript">
+    let currentURL = window.location.href;
+    currentURL = currentURL.split("/");
+    if (currentURL.length == 4){
+        document.getElementById("index").classList.add("active");
+    } else {
+        let page = currentURL[currentURL.length - 2]
+        var ele = document.getElementById(page);
+        if (ele){
+            document.getElementById(page).classList.add("active");
+        }
+    }
+
+</script>
+
+
+    <!-- Option 1: Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+  </body>
+</html>

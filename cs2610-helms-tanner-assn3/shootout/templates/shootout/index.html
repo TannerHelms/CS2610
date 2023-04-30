@@ -1,0 +1,168 @@
+{% extends "_Layout.html" %}
+{% load static %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+{% block content %}
+<div id="token">
+    {% csrf_token %}
+</div>
+</div>
+<h1 class="text-center">Javascript Calculator</h1>
+<h3 class="text-center">Create an expression:</h3>
+<div class="input-group mb-3 justify-content-center">
+    <div class="input-group-prepend m-1">
+      <input id="firstop" type="number" placeholder="1">
+    </div>
+    <select class="custom-select m-1" id="inputGroup">
+        <option selected value="+">+</option>
+        <option value="-">-</option>
+        <option value="*">*</option>
+        <option value="/">/</option>
+        <option value="%">%</option>
+        <option value="**">**</option>
+    </select>
+    <div class="input-group-prepend m-1">
+        <input id="secondop" type="number" placeholder="4">
+    </div>
+    <div class="input-group-prepend m-1">
+        <button type="button" onclick="calculate()">Calculate</button>
+    </div>
+</div>
+
+<div id="FreshExpressions" class="stuff-box cyan"><h3>Fresh Expressions appear here</h3>
+    <div id="expressionsContainer">
+    </div>
+</div>
+
+<div id="SavedExpressions" class="stuff-box magenta"><h3>Latest saved expressions</h3>
+    {% if expressions %}
+    <div id="savedExpressionsContainer">
+        {% for expression in expressions %}
+         <div class="stuff-box green d-flex justify-content-center">
+             {% if expression.total == None%}
+             <span class="m-3">Expression #{{expression.id}} {{expression.firstOperand}} {{expression.operator}} {{expression.secondOperand}} = Undefined</span>
+             {%else%}
+             <span class="m-3">Expression #{{expression.id}} {{expression.firstOperand}} {{expression.operator}} {{expression.secondOperand}} = {{expression.total}}</span>
+             {%endif%}
+            <form action="{% url 'shootout:delete' expression.id %}" method="POST">
+                {% csrf_token %}
+                <button class="btn btn-danger m-2" type="submit">Delete</button>
+            </form>
+         </div>
+        {%endfor%}
+    </div>
+    {%endif%}
+</div>
+
+<script>
+    var expressionCounter = 1;
+    function calculate(){
+        var newForm = document.createElement("form");
+        newForm.method = "POST";
+        newForm.action = "/save/";
+        newForm.id = expressionCounter;
+        newForm.classList.add("stuff-box");
+        newForm.classList.add("green");
+        var newToken = document.createElement("div");
+        newToken.innerHTML = document.getElementById("token").innerHTML;
+        newForm.appendChild(newToken);
+        var firstop = parseInt(document.getElementById('firstop').value);
+        var secondop = parseInt(document.getElementById('secondop').value);
+        var firstopInput = document.createElement('input');
+        var secondopInput = document.createElement('input');
+        firstopInput.type = "hidden";
+        secondopInput.type = "hidden";
+        firstopInput.value = firstop;
+        secondopInput.value = secondop;
+        firstopInput.name = "firstop";
+        secondopInput.name = "secondop";
+        newForm.appendChild(firstopInput);
+        newForm.appendChild(secondopInput);
+        var operator = document.createElement('input');
+        //operator.type = "hidden";
+        operator.name = "operator";
+        operator.type = "hidden";
+        newForm.appendChild(operator);
+        var spanTag = document.createElement('span');
+        newForm.appendChild(spanTag);
+        var total;
+        if (!isNaN(firstop) && !isNaN(secondop)){
+            switch(document.getElementById('inputGroup').value){
+                case '+':
+                    total = firstop + secondop;
+                    spanTag.innerText = `Expression #${expressionCounter} ${firstop} + ${secondop} = ${total}`;
+                    operator.value = '+';
+                    break;
+                case '-':
+                    total = firstop - secondop;
+                    spanTag.innerText = `Expression #${expressionCounter} ${firstop} - ${secondop} = ${total}`;
+                    operator.value = '-';
+                    break;
+                case '*':
+                    total = firstop * secondop;
+                    spanTag.innerText = `Expression #${expressionCounter} ${firstop} * ${secondop} = ${total}`;
+                    operator.value = '*';
+                    break;
+                case '/':
+                    total = firstop / secondop;
+                    console.log(total);
+                    if (total == "Infinity"){
+                        total = "Undefined";
+                    }
+                    spanTag.innerText = `Expression #${expressionCounter} ${firstop} / ${secondop} = ${total}`;
+                    operator.value = '/';
+                    break;
+                case '%':
+                    total = firstop % secondop;
+                    spanTag.innerText = `Expression #${expressionCounter} ${firstop} % ${secondop} = ${total}`;
+                    operator.value = '%';
+                    break;
+                case '**':
+                    total = firstop ** secondop;
+                    spanTag.innerText = `Expression #${expressionCounter} ${firstop} ** ${secondop} = ${total}`;
+                    operator.value = '**';
+                    break;
+                default:
+                spanTag.innerText = `There was an error in this calculation`;
+                total = "NA";
+            }
+        } else {
+            spanTag.innerText = `Error - One or more of the operands is missing!`;
+            total = "NA";
+        }
+        var totalInput = document.createElement("input");
+        totalInput.type = "hidden";
+        totalInput.name = "total";
+        totalInput.value = total;
+        newForm.appendChild(totalInput);
+
+        var saveBtn = document.createElement("button");
+        saveBtn.classList.add("btn-primary");
+        saveBtn.classList.add("btn");
+        saveBtn.classList.add("m-2");
+        saveBtn.innerText = "Save";
+        saveBtn.type = "submit";
+        if (total == "NA"){
+            saveBtn.disabled = true;
+            total = "";
+        }
+        newForm.appendChild(saveBtn);
+
+        var deleteBtn = document.createElement("button");
+        deleteBtn.classList.add("btn");
+        deleteBtn.classList.add("btn-primary");
+        deleteBtn.classList.add("m-2");
+        deleteBtn.innerText = "Delete";
+        
+        deleteBtn.onclick = () => {
+            deleteExpression(newForm.id);
+        }
+        //{`deleteExpression(${expressionCounter})`;};
+        newForm.appendChild(deleteBtn);
+        document.getElementById("expressionsContainer").prepend(newForm);
+        expressionCounter++;
+    }
+    function deleteExpression(id) {
+        document.getElementById(id).remove();
+    }
+</script>
+{% endblock %}
